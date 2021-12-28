@@ -339,17 +339,17 @@ def NewPoints(i):
     drTraces = [planet.DrawedTrace for planet in (plSystem.planets + plSystem.asteroids)]
 
     return drPlanets + drTraces + [plSystem.spaceShip.DrawedSpaceShip] \
-           + [plSystem.spaceShip.DrawedSpaceShipFlame] + [plSystem.spaceShip.DrawedTrace]
+           + [plSystem.spaceShip.DrawedSpaceShipFlame] + [plSystem.spaceShip.DrawedTrace]# + [ax.plot(R * np.sin(np.linspace(0, 6.28, 200)), R * np.cos(np.linspace(0, 6.28, 200)))[0]]
 
 
 if __name__ == '__main__':
-    global t, dt, plSystem, X, Y, VX, VY, Dx, Dy, DVx, DVy, X_Sh, Y_Sh, VX_Sh, VY_Sh, Dx_Sh, Dy_Sh, DVx_Sh, DVy_Sh, F_dv, Alpha
+    global t, dt, plSystem, X, Y, VX, VY, Dx, Dy, DVx, DVy, X_Sh, Y_Sh, VX_Sh, VY_Sh, Dx_Sh, Dy_Sh, DVx_Sh, DVy_Sh, F_dv, Alpha, ax
     np.seterr(all='warn', over='raise')
-    mult = 10
+    mult = 1
     R = 10 * mult
     m1 = 1000 * mult
     m2 = 1 * mult
-    v = 11.7
+    v = 10
     pl1 = Planet(0, 0, 0, 0, m1, 1, 'red')
     pl2 = Planet(R, 0, 0, v, m2, 0.2, 'blue')
     pl3 = Planet(0, -10, 10, 0, 50, 0.3, 'black')
@@ -374,13 +374,14 @@ if __name__ == '__main__':
     y4 = R / 2 * 3 ** (1 / 2)
     x5 = R / 2 * beta
     y5 = -R / 2 * 3 ** (1 / 2)
-    as1 = Asteroid(rnd[0] + x1, rnd[1], rnd[2], rnd[3] + v * x1 / R, 0.3, 'black')
-    as2 = Asteroid(rnd[4] + x2, rnd[5], rnd[6], rnd[7] + v * x2 / R, 0.3, 'black')
-    as3 = Asteroid(rnd[8] + x3, rnd[9], rnd[10], rnd[11] + v * x3 / R, 0.3, 'black')
-    as4 = Asteroid(x4 + rnd[12], y4 + rnd[13], rnd[14], rnd[15], 0.3, 'black')
-    as5 = Asteroid(x5 + rnd[16], y5 + rnd[17], rnd[18], rnd[19], 0.3, 'black')
+    speed_plus = 0.1
+    as1 = Asteroid(rnd[0] + x1, rnd[1], rnd[2], rnd[3] + v * x1 / R + speed_plus, 0.1, 'black')
+    as2 = Asteroid(rnd[4] + x2, rnd[5], rnd[6], rnd[7] + v * x2 / R + speed_plus, 0.1, 'black')
+    as3 = Asteroid(rnd[8] + x3, rnd[9], rnd[10], rnd[11] + v * x3 / R + speed_plus, 0.1, 'black')
+    as4 = Asteroid(x4 + rnd[12], y4 + rnd[13], rnd[14] - 2 * v * x4 / R * np.sqrt(3) / 2, rnd[15] + 2 * v * x4 / (R * 2), 0.1, 'black')
+    as5 = Asteroid(x5 + rnd[16], y5 + rnd[17], rnd[18] + 2 * v * x5 * np.sqrt(3) / (2 * R), rnd[19] + 2 * v * x5 / (R * 2), 0.1, 'black')
 
-    plSystem = PlanetSystem([pl1, pl2], [as1, as2, as3], Our_Rocket)
+    plSystem = PlanetSystem([pl1, pl2], [as1, as2, as3, as4, as5], Our_Rocket)
 
     io.savemat('FirstUniverse.mat', {'PS': plSystem})
 
@@ -436,6 +437,6 @@ if __name__ == '__main__':
 
     plSystem.Draw(ax)
 
-    animation = FuncAnimation(fig, NewPoints, interval=dt * 1000, blit=True)
+    animation = FuncAnimation(fig, NewPoints, blit=True)
 
     plt.show()
